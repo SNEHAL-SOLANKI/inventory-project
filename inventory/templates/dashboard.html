@@ -17,7 +17,7 @@ Dashboard
                                 </span>
                                 <span>
                                     <h5 class="mb-1">Total Products</h5>
-                                    <a href="#" class="text-decoration-none small">View more</a>
+                                    
                                 </span>
                             </div>
                             <div class="circle rounded-circle d-flex justify-content-center align-items-center">
@@ -34,7 +34,7 @@ Dashboard
                                 </span>
                                 <span>
                                     <h5 class="mb-1">Total Stock</h5>
-                                    <a href="#" class="text-decoration-none small">View more</a>
+                                    
                                 </span>
                             </div>
                             <div class="circle rounded-circle d-flex justify-content-center align-items-center">
@@ -52,7 +52,7 @@ Dashboard
                                 </span>
                                 <span>
                                     <h5 class="mb-1">Purchase Amt</h5>
-                                    <a href="#" class="text-decoration-none small">View more</a>
+                                    
                                 </span>
                             </div>
                             <div class="circle rounded-circle d-flex justify-content-center align-items-center">
@@ -69,7 +69,7 @@ Dashboard
                                 </span>
                                 <span>
                                     <h5 class="mb-1">Sales Amt</h5>
-                                    <a href="#" class="text-decoration-none small">View more</a>
+                                    
                                 </span>
                             </div>
                             <div class="circle rounded-circle d-flex justify-content-center align-items-center">
@@ -104,7 +104,7 @@ Dashboard
                             <td>{{ item.product.prodName }}</td>
                             <td>{{ item.product.prodCategory.catName }}</td>
                             <td>{{ item.stock }}</td>
-                            <td>15</td> {# Example hardcoded reorder level, maybe from db later #}
+                            <td>{{ item.product.reorderLevel }}</td> {# Example hardcoded reorder level, maybe from db later #}
                             <td>{{ item.reorder_qty }}</td>
                             <td>{{ item.product.prodSupplier.supName }}</td>
                             <td>{% if item.stock == 0 %}Out{% else %}Low{% endif %}</td>

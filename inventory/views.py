@@ -150,9 +150,39 @@ def dashboard(request):
 @permission_required('view_inventory')
 def inventory(request):
     invData = InventoryMaster.objects.all()
-    
-    
-    return render(request, 'inventory.html', {'inventory': invData})
+
+    total_products = invData.count()
+
+    total_stock = 0
+    in_stock = 0
+    low_stock = 0
+    out_stock = 0
+
+    for item in invData:
+        try:
+            qty = int(item.prodStockQty) if item.prodStockQty else 0
+            total_stock += qty
+
+            if qty == 0:
+                out_stock += 1
+            elif qty <= 5:
+                low_stock += 1
+            else:
+                in_stock += 1
+
+        except ValueError:
+            pass
+
+    context = {
+        'inventory': invData,
+        'total_products': total_products,
+        'total_stock': total_stock,
+        'in_stock': in_stock,
+        'low_stock': low_stock,
+        'out_stock': out_stock,
+    }
+
+    return render(request, 'inventory.html', context)
 
 @permission_required('add_inventory')
 def add_inventory(request):
@@ -1074,7 +1104,7 @@ def reports(request):
     total_stock_qty = 0
 
     for item in all_inventory:
-        cat = str(item.prodCategory).strip() if item.prodCategory else ""
+        cat = item.prodCategory.catName if item.prodCategory else ""
         if not cat or cat.lower() in ["none", "null", "unknown"]:
           continue
         try:
