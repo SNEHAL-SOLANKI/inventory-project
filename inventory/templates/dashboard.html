@@ -102,11 +102,11 @@ Dashboard
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ item.product.prodName }}</td>
-                            <td>{{ item.product.prodCategory }}</td>
+                            <td>{{ item.product.prodCategory.catName }}</td>
                             <td>{{ item.stock }}</td>
                             <td>15</td> {# Example hardcoded reorder level, maybe from db later #}
                             <td>{{ item.reorder_qty }}</td>
-                            <td>{{ item.product.prodSupplier }}</td>
+                            <td>{{ item.product.prodSupplier.supName }}</td>
                             <td>{% if item.stock == 0 %}Out{% else %}Low{% endif %}</td>
                         </tr>
                         {% empty %}

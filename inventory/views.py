@@ -111,7 +111,7 @@ def dashboard(request):
     category_stock = {}
     total_stock_qty = 0
     for item in all_inventory:
-        cat = str(item.prodCategory).strip() if item.prodCategory else ""
+        cat = item.prodCategory.catName if item.prodCategory else ""
 
         if not cat or cat.lower() in ["none", "null", "unknown"]:
             continue
