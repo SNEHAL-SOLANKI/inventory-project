@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block content %}
+
+
+            <div class="inner-content">
+                <h4 class="Dashboard">Dashboard</h4>
+                <div class="row row-gap-3 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="total-products rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                            <div class="d-flex gap-3">
+                                <span class="flex-shrink-0 d-block">
+                                    <img src="{% static 'images\packages.png' %}" width="50" alt="">
+                                </span>
+                                <span>
+                                    <h5 class="mb-1">Total Products</h5>
+                                    <a href="#" class="text-decoration-none small">View more</a>
+                                </span>
+                            </div>
+                            <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                                {{ total_products }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="total-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                            <div class="d-flex gap-3">
+                                <span class="flex-shrink-0 d-block">
+                                    <img src="{% static 'images\warehouse.png' %}" width="50" alt="">
+                                </span>
+                                <span>
+                                    <h5 class="mb-1">Total Stock</h5>
+                                    <a href="#" class="text-decoration-none small">View more</a>
+                                </span>
+                            </div>
+                            <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                                {{ total_stock }}
+                            </div>
+                        </div>
+                    </div>
+
+                    
+					<div class="col-md-6 col-lg-3">
+                        <div class="low-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                            <div class="d-flex gap-3">
+                                <span class="flex-shrink-0 d-block">
+                                    <img src="{% static 'images/shopping-cart.png' %}" width="50" alt="">
+                                </span>
+                                <span>
+                                    <h5 class="mb-1">Purchase Amt</h5>
+                                    <a href="#" class="text-decoration-none small">View more</a>
+                                </span>
+                            </div>
+                            <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                                {{ total_purchase_amount }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3">
+                        <div class="out-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                            <div class="d-flex gap-3">
+                                <span class="flex-shrink-0 d-block">
+                                    <img src="{% static 'images/sales-amount.png' %}" width="50" alt="">
+                                </span>
+                                <span>
+                                    <h5 class="mb-1">Sales Amt</h5>
+                                    <a href="#" class="text-decoration-none small">View more</a>
+                                </span>
+                            </div>
+                            <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                                {{ total_sales_amount }}
+                            </div>
+                        </div>
+                    </div>
+			       
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="box bg-white p-3 rounded-3 shadow mb-4">
+                            
+                            <!-- Table Title -->
+                        <h5 class="mb-3 fw-bold">Low Stock & Reorder Status</h5>
+                    <table class="table table-hover table-list">
+                        <tr>
+                            <th>No</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Stock</th>
+                            <th>Reorder Level</th>
+                            <th>Reorder Quantity</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            
+                        </tr>
+                        {% for item in low_stock_items %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.product.prodName }}</td>
+                            <td>{{ item.product.prodCategory }}</td>
+                            <td>{{ item.stock }}</td>
+                            <td>15</td> {# Example hardcoded reorder level, maybe from db later #}
+                            <td>{{ item.reorder_qty }}</td>
+                            <td>{{ item.product.prodSupplier }}</td>
+                            <td>{% if item.stock == 0 %}Out{% else %}Low{% endif %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No low stock items</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                    </div>
+
+    <!--Chart-->
+                    <div class="col-md-5">
+                        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+                    </div>
+                </div>
+                
+                <br><br>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="new" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="clm" style="height: 370px; width: 100%;"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+   
+    <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+    
+{% block extra_js %}
+   
+    <script>
+window.onload = function() {
+
+    var chart = new CanvasJS.Chart("new", {
+	animationEnabled: true,	
+	title: {
+		text:"Top 7 Customers"
+	},
+	axisX: {
+		interval: 5
+	},
+	axisY2: {
+		interlacedColor: "rgba(1,77,101,.2)",
+		gridColor: "rgba(1,77,101,.1)",
+        maximum: 120,
+        interval: 10,
+		title: "Customer ID"
+	},
+	data: [{
+		type: "bar",
+		name: "Customers",
+		color: "#014D65",                                                    
+		axisYType: "secondary",
+        indexLabel: "ID: {id}",
+		dataPoints: {{ top_customers_data|safe }}
+	}]
+});
+
+var chart2 = new CanvasJS.Chart("clm", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title:{
+		text: "Recently Updated Stock"
+	},
+	axisY: {
+		title: "Stock Quantity"
+	},
+	data: [{        
+		type: "column",  
+		showInLegend: true, 
+		legendMarkerColor: "grey",
+		legendText: "",
+		dataPoints: {{ recent_stock_data|safe }}
+	}]
+});
+
+var chart3 = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title: {
+		text: "Stock Distribution by Category"
+	},
+	data: [{
+		type: "pie",
+		startAngle: 240,
+		yValueFormatString: "##0.00\"%\"",
+		indexLabel: "{label} {y}",
+
+        
+
+		dataPoints: {{ cat_stock_data|safe }}
+	}]
+});
+
+chart.render();
+chart2.render();
+chart3.render();
+
+}
+</script>
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+
+            $('.cubes.png').click(function(){
+                alert('Hi');
+                $('.collapse').css('display','block')
+            })
+        })
+    </script>
+ {% endblock %}
+</body>
+</html>

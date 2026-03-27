@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Reports
+{% endblock %}
+{% block content %}
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-3 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-bar-chart"></i> Reports Management
+        </h4>
+    </div>
+
+    <!-- FILTER SECTION -->
+    <div class="box bg-white p-3 rounded-3 shadow mb-4">
+        <form method="get" action="{% url 'reports' %}">
+            <div class="row g-3 align-items-end">
+    
+                <div class="col-md-3">
+                    <label class="form-label">Report Type</label>
+                    <select name="report_type" class="form-select">
+                        <option value="all" {% if report_type == 'all' %}selected{% endif %}>All</option>
+                        <option value="sales" {% if report_type == 'sales' %}selected{% endif %}>Sales Report</option>
+                        <option value="purchase" {% if report_type == 'purchase' %}selected{% endif %}>Purchase Report</option>
+                    </select>
+                </div>
+    
+                <div class="col-md-3">
+                    <label class="form-label">From Date</label>
+                    <input type="date" name="from_date" class="form-control" value="{{ from_date }}">
+                </div>
+    
+                <div class="col-md-3">
+                    <label class="form-label">To Date</label>
+                    <input type="date" name="to_date" class="form-control" value="{{ to_date }}">
+                </div>
+    
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-theme w-100">
+                        <i class="bi bi-search"></i> Generate
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Export as PDF">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Export as Excel">
+                        <i class="bi bi-file-earmark-excel"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="box bg-white p-3 rounded-3 shadow text-center">
+                <h6>Total Sales</h6>
+                <h4 class="text-success">₹ {{ total_sales|floatformat:2 }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="box bg-white p-3 rounded-3 shadow text-center">
+                <h6>Total Purchase</h6>
+                <h4 class="text-primary">₹ {{ total_purchase|floatformat:2 }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="box bg-white p-3 rounded-3 shadow text-center">
+                <h6>Net Profit</h6>
+                <h4 class="text-success">₹ {{ net_profit|floatformat:2 }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="box bg-white p-3 rounded-3 shadow text-center">
+                <h6>Total Orders</h6>
+                <h4 class="text-dark">{{ total_orders }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHART SECTION -->
+    <div class="box bg-white p-3 rounded-3 shadow mb-4">
+        <h5 class="mb-3">Report Chart</h5>
+        
+    <div class="row">
+    <div class="col-md-7">  
+        <div id="clm" style="height: 370px; width: 100%;"></div> 
+    </div>
+
+    <div class="col-md-5">  
+        <div id="pieC" style="height: 370px; width: 100%;"></div>               
+    </div>
+</div> <!-- ✅ VERY IMPORTANT -->
+
+    <!-- TABLE SECTION -->
+    <div class="box bg-white p-3 rounded-3 shadow">
+        <h5 class="mb-3">Report Details</h5>
+
+        <table class="table table-hover table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>No</th>
+                    <th>Invoice No</th>
+                    <th>Date</th>
+                    <th>Customer/Supplier</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detail in report_details %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ detail.invoice }}</td>
+                    <td>{{ detail.date }}</td>
+                    <td>{{ detail.party }}</td>
+                    <td>₹ {{ detail.amount|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No reports found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+
+	
+
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+
+{% block extra_js %}
+<script>
+window.onload = function() {
+
+    var chart2 = new CanvasJS.Chart("clm", {
+        animationEnabled: true,
+        theme: "light2",
+        title:{
+            text: "Performance Overview"
+        },
+        axisY: {
+            title: "Amount"
+        },
+        data: [{
+            type: "column",
+            indexLabel: "{y}",
+            dataPoints: JSON.parse('{{ performance_data|escapejs }}')
+        }]
+    });
+
+    var chart3 = new CanvasJS.Chart("pieC", {
+        animationEnabled: true,
+        title: {
+            text: "Data Distribution Overview"
+        },
+        data: [{
+            type: "pie",
+            yValueFormatString: "##0.00\"%\"",
+            indexLabel: "{label} {y}",
+            dataPoints: JSON.parse('{{ distribution_data|escapejs }}')
+        }]
+    });
+
+    chart2.render();
+    chart3.render();
+}
+</script>
+
+
+
+
+<script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+</script> 
+    
+{% endblock %}
+</body>
+</html>

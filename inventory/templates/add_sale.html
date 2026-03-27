@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Add Sale
+{% endblock %}
+
+{% block content %}
+
+<div class="inner-content">
+
+<div class="d-flex justify-content-between mb-4 align-items-center">
+    <h4 class="m-0 Dashboard_H">
+        <i class="bi bi-cart-plus"></i> Add New Sale
+    </h4>
+</div>
+
+<div class="box bg-white p-4 rounded-3 shadow">
+
+<form method="post">
+{% csrf_token %}
+
+<!-- Customer Section -->
+<h5 class="mb-3 text-primary">Customer Details</h5>
+
+<div class="row g-3">
+
+<div class="col-md-4">
+<label class="form-label">Customer</label>
+<select class="form-control" name="Customer">
+<option value="">Select Customer</option>
+{% for customer in customers %}
+<option value="{{ customer.id }}">{{ customer.custName }}</option>
+{% endfor %}
+</select>
+</div>
+
+<div class="col-md-4">
+<label class="form-label">Invoice No</label>
+<input type="text" name="Invoiceno" class="form-control" value="{{ invoice_no }}" readonly>
+</div>
+
+<div class="col-md-4">
+<label class="form-label">Date</label>
+<input type="date" name="Date" class="form-control">
+</div>
+
+</div>
+
+<hr class="my-4">
+
+<!-- Product Section -->
+
+<h5 class="mb-3 text-primary">Add Products</h5>
+
+<div class="table-responsive">
+
+<table class="table table-bordered" id="productTable">
+
+<thead class="table-light">
+<tr>
+<th>Product</th>
+<th width="120">Stock</th>
+<th width="120">Price</th>
+<th width="120">Qty</th>
+<th width="140">Total</th>
+<th width="80">Remove</th>
+</tr>
+</thead>
+
+<tbody id="productRows">
+
+<tr>
+
+<td>
+<select class="form-control" name="Product[]">
+<option value="">Select Product</option>
+{% for product in products %}
+<option value="{{ product.id }}">{{ product.prodName }}</option>
+{% endfor %}
+</select>
+</td>
+
+<td>
+<input type="number" name="Stock[]" class="form-control stock" readonly>
+</td>
+
+<td>
+<input type="number" name="Price[]" class="form-control price" value="0">
+</td>
+
+<td>
+<input type="number" name="Quantity[]" class="form-control qty" value="1">
+</td>
+
+<td>
+<input type="number" name="Total[]" class="form-control total" value="0" readonly>
+</td>
+
+<td class="text-center">
+<button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<button type="button" class="btn btn-sm btn-primary mb-3" id="addRow">
++ Add Product
+</button>
+
+<hr class="my-4">
+
+<!-- Bill Summary -->
+
+<h5 class="mb-3 text-primary">Bill Summary</h5>
+
+<div class="row g-3 justify-content-end">
+
+<div class="col-md-3">
+<label>Subtotal</label>
+<input type="number" name="Subtotal" id="subtotal" class="form-control" readonly>
+</div>
+
+<div class="col-md-3">
+<label>Discount</label>
+<input type="number" name="Discount" id="discount" class="form-control" value="0">
+</div>
+
+<div class="col-md-3">
+<label>Tax (5%)</label>
+<input type="number" name="Tax" id="tax" class="form-control" readonly>
+</div>
+
+<div class="col-md-3">
+<label>Grand Total</label>
+<input type="number" name="GrandTotal" id="grandTotal" class="form-control" readonly>
+</div>
+
+</div>
+
+<hr class="my-4">
+
+<!-- Payment -->
+
+<h5 class="mb-3 text-primary">Payment</h5>
+
+<div class="row g-3">
+
+<div class="col-md-4">
+<label>Payment Mode</label>
+<select class="form-control" name="PaymentMode">
+<option>Cash</option>
+<option>UPI</option>
+<option>Card</option>
+</select>
+</div>
+
+<div class="col-md-4">
+<label>Paid Amount</label>
+<input type="number" name="PaidAmount" id="paidAmount" class="form-control">
+</div>
+
+</div>
+
+<div class="text-end mt-4">
+<button type="submit" class="btn btn-success">Save Sale</button>
+<a href="{% url 'sales' %}" class="btn btn-secondary">Cancel</a>
+</div>
+
+</form>
+
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+$(document).ready(function(){
+
+// Add New Row
+
+$("#addRow").click(function(){
+
+var row = `
+<tr>
+
+<td>
+<select class="form-control" name="Product[]">
+<option value="">Select Product</option>
+{% for product in products %}
+<option value="{{ product.id }}">{{ product.prodName }}</option>
+{% endfor %}
+</select>
+</td>
+
+<td>
+<input type="number" name="Stock[]" class="form-control stock" readonly>
+</td>
+
+<td>
+<input type="number" name="Price[]" class="form-control price" value="0">
+</td>
+
+<td>
+<input type="number" name="Quantity[]" class="form-control qty" value="1">
+</td>
+
+<td>
+<input type="number" name="Total[]" class="form-control total" value="0" readonly>
+</td>
+
+<td class="text-center">
+<button type="button" class="btn btn-danger btn-sm removeRow">X</button>
+</td>
+
+</tr>
+`;
+
+$("#productRows").append(row);
+
+});
+
+
+// Remove Row
+
+$(document).on("click",".removeRow",function(){
+
+$(this).closest("tr").remove();
+calculateSubtotal();
+
+});
+
+
+// Price × Qty
+
+$(document).on("keyup change",".price, .qty",function(){
+
+var row = $(this).closest("tr");
+
+var price = row.find(".price").val();
+var qty = row.find(".qty").val();
+
+var total = price * qty;
+
+row.find(".total").val(total);
+
+calculateSubtotal();
+
+});
+
+
+// Calculate Subtotal
+
+function calculateSubtotal(){
+
+var subtotal = 0;
+
+$(".total").each(function(){
+
+subtotal += parseFloat($(this).val()) || 0;
+
+});
+
+$("#subtotal").val(subtotal);
+
+var discount = parseFloat($("#discount").val()) || 0;
+
+var tax = (subtotal - discount) * 0.05;
+
+$("#tax").val(tax);
+
+var grand = subtotal - discount + tax;
+
+$("#grandTotal").val(grand);
+
+}
+
+
+// Discount change
+
+$("#discount").keyup(function(){
+calculateSubtotal();
+});
+
+});
+
+</script>
+
+{% endblock %}

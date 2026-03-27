@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Profile - IMS</title>
+
+<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+<link rel="icon" href="{% static 'images/LOGO1.png' %}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<style>
+body{
+background:#f4f6f9;
+font-family:Segoe UI;
+background-color: #dfe6e9;
+}
+
+.btn-theme{
+background-color: #18a7e5;color: #fff;
+}
+.btn-theme:hover{
+background-color: #0d9ad7;color: #fff;
+}
+
+.profile-card{
+border:none;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+background:white;
+}
+
+.profile-img{
+width:140px;
+height:140px;
+border-radius:50%;
+border:4px solid #0d6efd;
+object-fit:cover;
+}
+
+.profile-info p{
+margin-bottom:10px;
+font-size:15px;
+}
+
+.btn-profile{
+padding:8px 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container mt-5">
+<div class="row justify-content-center">
+<div class="col-lg-5">
+
+<div class="card profile-card p-5 text-center">
+
+<img src="{% static 'images/userProfile.png' %}" class="profile-img mx-auto mb-1">
+
+<!-- USER NAME -->
+<h4 class="fw-bold text-secondary">
+    {{ request.user.username }}
+</h4>
+
+<!-- ROLE -->
+<span class="badge bg-primary mb-1 fw-bolder">
+    {% if request.user.role %}
+        {{ request.user.role }}
+    {% else %}
+        User
+    {% endif %}
+</span>
+
+<hr>
+
+<div class="profile-info text-start mx-auto">
+
+<h4 class="fw-bold text-secondary">
+    {{ user.userFname }}
+</h4>
+
+<span class="badge bg-primary mb-2 fw-bolder">
+    {{ user.userRole }}
+</span>
+
+
+
+<div class="profile-info text-start mx-auto">
+
+<p><i class="bi bi-envelope"></i> {{ user.userEmail }}</p>
+
+<p><i class="bi bi-check-circle text-success"></i> Active</p>
+
+<p>
+<i class="bi bi-calendar"></i> 
+Joined: {{ user.userLastLogin|date:"d M Y" }}
+</p>
+
+
+</div>
+
+{% comment %} <div class="mt-3">
+<button class="btn btn-theme btn-profile me-2" data-bs-toggle="modal" data-bs-target="#editProfile">
+<i class="bi bi-pencil"></i> Update Profile
+</button>
+
+<button class="btn btn-secondary btn-profile" data-bs-toggle="modal" data-bs-target="#changePassword">
+<i class="bi bi-key"></i> Change Password
+</button>
+</div> {% endcomment %}
+
+</div>
+</div>
+</div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal fade" id="editProfile">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title"><i class="bi bi-person"></i> Edit Profile</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Full Name</label>
+<input type="text" name="username" class="form-control" value="{{ request.user.username }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Email</label>
+<input type="email" name="email" class="form-control" value="{{ request.user.email }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Phone</label>
+<input type="text" name="phone" class="form-control" value="{{ request.user.phone }}">
+</div>
+
+<div class="col-md-6 mb-3">
+<label class="form-label">Role</label>
+<input type="text" class="form-control" value="{{ request.user.role }}" disabled>
+</div>
+
+<div class="col-md-12 mb-3">
+<label class="form-label">Profile Photo</label>
+<input type="file" class="form-control">
+</div>
+
+</div>
+
+<div class="text-end">
+<button class="btn btn-theme">Save Changes</button>
+</div>
+
+</form>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal fade" id="changePassword">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title"><i class="bi bi-key"></i> Change Password</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+<form method="POST">
+{% csrf_token %}
+
+<div class="mb-3">
+<label class="form-label">Current Password</label>
+<input type="password" name="current_password" class="form-control">
+</div>
+
+<div class="mb-3">
+<label class="form-label">New Password</label>
+<input type="password" name="new_password" class="form-control">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Confirm Password</label>
+<input type="password" name="confirm_password" class="form-control">
+</div>
+
+<div class="text-end">
+<button class="btn btn-theme">Update Password</button>
+</div>
+
+</form>
+</div>
+
+</div>
+</div>
+</div>
+
+<script src="{% static 'JS/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>

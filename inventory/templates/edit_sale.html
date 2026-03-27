@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Edit Sale
+{% endblock %}
+{% block content %}
+ <div class="inner-content">
+
+            
+        <div class="d-flex justify-content-between mb-4 align-items-center">
+            <h4 class="m-0 Dashboard_H">
+                <i class="bi bi-cart-plus"></i> Edit Sale
+            </h4>
+        </div>
+                
+    <div class="box bg-white p-4 rounded-3 shadow">
+    <form method="post" enctype="multipart/form-data" class="">
+        {% csrf_token %}
+    <!-- Customer Section -->
+    <h5 class="mb-3 text-primary">Customer Details</h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Customer</label>
+            <select class="form-control" name="Customer">
+                <option value="">Select Customer</option>
+                {% for customer in customers %}
+                <option value="{{ customer.id }}" {% if customer.id|stringformat:"s" == sale.salesCustomer.id|stringformat:"s" %}selected{% endif %}>{{ customer.custName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Invoice No</label>
+            <input type="text" name="Invoiceno" value="{{ sale.salesInvoiceno }}" class="form-control" readonly>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date</label>
+            <input type="date" name="Date" value="{{ sale.salesDate|date:'Y-m-d' }}" class="form-control">
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Product Section -->
+    <h5 class="mb-3 text-primary">Add Products</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered" id="productTable" name="ProductTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Product</th>
+                    <th width="120">Stock</th>
+                    <th width="120">Price</th>
+                    <th width="120">Qty</th>
+                    <th width="140">Total</th>
+                    <th width="80">Remove</th>
+                </tr>
+            </thead>
+            <tbody id="productRows">
+                {% if sale_products %}
+                    {% for item in sale_products %}
+                    <tr>
+                        <td>
+                            <select class="form-control" name="Product[]">
+                                <option value="">Select Product</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}" {% if product.id|stringformat:"s" == item.product_id|stringformat:"s" %}selected{% endif %}>{{ product.prodName }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="number" name="Stock[]" class="form-control stock" readonly></td>
+                        <td><input type="number" name="Price[]" class="form-control price" value="{{ item.price }}"></td>
+                        <td><input type="number" name="Quantity[]" class="form-control qty" value="{{ item.quantity }}"></td>
+                        <td><input type="number" name="Total[]" class="form-control total" value="{{ item.total }}" readonly></td>
+                        <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td>
+                            <select class="form-control" name="Product[]">
+                                <option value="">Select Product</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.prodName }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="number" name="Stock[]" class="form-control stock" readonly></td>
+                        <td><input type="number" name="Price[]" class="form-control price" value="0"></td>
+                        <td><input type="number" name="Quantity[]" class="form-control qty" value="1"></td>
+                        <td><input type="number" name="Total[]" class="form-control total" value="0" readonly></td>
+                        <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="button" class="btn btn-sm btn-primary mb-3" id="addRow">+ Add Product</button>
+
+    <hr class="my-4">
+
+    <!-- Summary Section -->
+    <h5 class="mb-3 text-primary">Bill Summary</h5>
+    <div class="row g-3 justify-content-end">
+        <div class="col-md-3">
+            <label>Subtotal</label>
+            <input type="number" name="Subtotal" value="{{ sale.salesSubTotal }}" id="subtotal" class="form-control" readonly>
+        </div>
+        <div class="col-md-3">
+            <label>Discount</label>
+            <input type="number" name="Discount" id="discount" class="form-control" value="{{ sale.salesDiscount }}">
+        </div>
+        <div class="col-md-3">
+            <label>Tax (5%)</label>
+            <input type="number" name="Tax" id="tax" class="form-control" value="{{ sale.salesTax }}">
+        </div>
+        <div class="col-md-3">
+            <label>Grand Total</label>
+            <input type="number" name="GrandTotal" id="grandTotal" class="form-control" value="{{ sale.salesGrandTotal }}">
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Payment Section -->
+    <h5 class="mb-3 text-primary">Payment</h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label>Payment Mode</label>
+            <select class="form-control" name="PaymentMode" value="{{ sale.salesPaymentMode }}" id="paymentMode">
+                <option>Cash</option>
+                <option>UPI</option>
+                <option>Card</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label>Paid Amount</label>
+            <input type="number" name="PaidAmount" id="paidAmount" class="form-control" value="{{ sale.salesPaidAmount }}">
+        </div>
+        <div class="col-md-4">
+            <label>Change Return</label>
+            <input type="number" name="ChangeReturn" value="{{ sale.salesChangeReturn }}" id="changeReturn" class="form-control" readonly>
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <button type="submit" class="btn btn-theme">Save Sale</button>
+        <a href="{% url 'sales' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+
+    </form>                 
+    
+</div>
+</div>
+    
+ 
+      <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function(){
+    // Add New Row
+    $("#addRow").click(function(){
+        var row = `
+        <tr>
+            <td>
+                <select class="form-control" name="Product[]">
+                    <option value="">Select Product</option>
+                    {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.prodName }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input type="number" name="Stock[]" class="form-control stock" readonly></td>
+            <td><input type="number" name="Price[]" class="form-control price" value="0"></td>
+            <td><input type="number" name="Quantity[]" class="form-control qty" value="1"></td>
+            <td><input type="number" name="Total[]" class="form-control total" value="0" readonly></td>
+            <td class="text-center"><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+        </tr>
+        `;
+        $("#productRows").append(row);
+    });
+
+    // Remove Row
+    $(document).on("click",".removeRow",function(){
+        $(this).closest("tr").remove();
+        calculateSubtotal();
+    });
+
+    // Price × Qty
+    $(document).on("keyup change",".price, .qty",function(){
+        var row = $(this).closest("tr");
+        var price = parseFloat(row.find(".price").val()) || 0;
+        var qty = parseFloat(row.find(".qty").val()) || 0;
+        var total = price * qty;
+        row.find(".total").val(total.toFixed(2));
+        calculateSubtotal();
+    });
+
+    // Calculate Subtotal
+    function calculateSubtotal(){
+        var subtotal = 0;
+        $(".total").each(function(){
+            subtotal += parseFloat($(this).val()) || 0;
+        });
+        $("#subtotal").val(subtotal.toFixed(2));
+        var discount = parseFloat($("#discount").val()) || 0;
+        var tax = (subtotal - discount) * 0.05;
+        $("#tax").val(tax.toFixed(2));
+        var grand = subtotal - discount + tax;
+        $("#grandTotal").val(grand.toFixed(2));
+    }
+
+    // Discount change
+    $("#discount").on("keyup change", function(){
+        calculateSubtotal();
+    });
+
+    // Initial calculation on page load
+    calculateSubtotal();
+
+    // Sidebar Toggle
+    $('#toggle-btn').click(function(){
+        $('.sidebar').toggleClass('full')
+    });
+});
+</script>
+{% endblock %}
+</body>
+</html>

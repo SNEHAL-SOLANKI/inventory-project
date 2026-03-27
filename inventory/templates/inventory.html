@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Inventory
+{% endblock %}
+{% block content %}
+
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-box-seam"></i> Inventory Management
+        </h4>
+
+        {% if request.session.user_role == 'Admin' or 'add_inventory' in request.session.user_permissions %}
+        <a href="{% url 'add_inventory' %}" class="btn btn-theme">
+            <i class="bi bi-person-plus"></i> Add New Inventory Item
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row row-gap-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="total-products rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                <div class="d-flex gap-3">
+                    <span class="flex-shrink-0 d-block">
+                        <img src="{% static 'images/cat.png' %}" width="50" alt="">
+                    </span>
+                    <span>
+                        <h5 class="mb-1">Total Products</h5>
+                        <a href="#" class="text-decoration-none small">View more</a>
+                    </span>
+                </div>
+                <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                    120
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="total-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                <div class="d-flex gap-3">
+                    <span class="flex-shrink-0 d-block">
+                        <img src="{% static 'images/cat.png' %}" width="50" alt="">
+                    </span>
+                    <span>
+                        <h5 class="mb-1">In Stock</h5>
+                        <a href="#" class="text-decoration-none small">View more</a>
+                    </span>
+                </div>
+                <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                    500
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="low-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                <div class="d-flex gap-3">
+                    <span class="flex-shrink-0 d-block">
+                        <img src="{% static 'images/cat.png' %}" width="50" alt="">
+                    </span>
+                    <span>
+                        <h5 class="mb-1">Low Stock</h5>
+                        <a href="#" class="text-decoration-none small">View more</a>
+                    </span>
+                </div>
+                <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                    03
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="out-stock rounded-3 border-0 shadow p-3 d-flex gap-3 py-4 justify-content-between">
+                <div class="d-flex gap-3">
+                    <span class="flex-shrink-0 d-block">
+                        <img src="{% static 'images/cat.png' %}" width="50" alt="">
+                    </span>
+                    <span>
+                        <h5 class="mb-1">Out of Stock</h5>
+                        <a href="#" class="text-decoration-none small">View more</a>
+                    </span>
+                </div>
+                <div class="circle rounded-circle d-flex justify-content-center align-items-center">
+                    100
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box bg-white p-3 rounded-3 shadow mb-4">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered align-middle text-center">
+
+                        <table class="table table-hover table-list">
+                            <tr>
+                                <th>No</th>
+                                <th>Icon</th>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+
+                                <th>Purchase Price</th>
+                                <th>Selling Price</th>
+                                <th>Profit</th>
+                                <th>Stock</th>
+                                <th>Reorder Level</th>
+                                <th>Reorder Qty</th>
+                                <th>Supplier</th>
+                                <th>Last Updated</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="inventoryTable">
+
+                                {% for prod in inventory %}
+                                <tr {% if prod.prodStockQty <= prod.reorderLevel %} class="table-danger" {% endif %}>
+                                    <td>{{ forloop.counter }}</td>
+
+                                    <td>
+                                       <img src="{% url 'get_inventory_image' id=prod.id %}" width="50" alt="">
+                                    </td>
+
+                                    <td>{{ prod.prodName }}</td>
+                                    <td>{{ prod.prodCode }}</td>
+                                    <td>{{ prod.prodCategory }}</td>
+                                    <td>{{ prod.prodPurchasePrice }}</td>
+                                    <td>{{ prod.prodSellingPrice }}</td>
+                                    <td class="profit">{{ prod.profit }}</td>
+                                    <td class="stock">{{ prod.prodStockQty }}</td>
+                                    <td>{{ prod.reorderLevel }}</td>
+                                    <td>{{ prod.reorderQuantity }}</td>
+                                    <td>{{ prod.prodSupplier }}</td>
+                                    <td>{{ prod.prodLastUpdated|date:"d M Y H:i" }}</td>
+
+                                    {% if prod.prodStatus %}
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    {% else %}
+                                    <td><span class="badge bg-danger">Inactive</span></td>
+                                    {% endif %}
+                                    
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                        {% if request.session.user_role == 'Admin' or 'edit_inventory' in request.session.user_permissions %}
+                                        <a href="{% url 'edit_inventory' prod.pk %}"
+                                            class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        {% endif %}
+
+                                        {% if request.session.user_role == 'Admin' or 'delete_inventory' in request.session.user_permissions %}
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#delete" data-inventory-id="{{ prod.pk }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+
+                            </tbody>
+                            </thead>
+                        </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span
+                            class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                        <a class="btn btn-success btn-sm">Yes,Confirm</a>
+                        <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    <script src="{% static 'JS/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS/jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+    {% block extra_js %}
+    <script>
+        $(document).ready(function () {
+            $('#toggle-btn').click(function () {
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+    </script>
+
+    <script>
+        $('#delete').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var inventoryId = button.data('inventory-id') // Extract info from data-* attributes
+            var modal = $(this)
+            modal.find('.btn-success').attr('href', '/delete_inventory/' + inventoryId + '/')
+        })
+    </script>
+    {% endblock %}
+    </body>
+
+    </html>

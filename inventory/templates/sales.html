@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+xyz Sales
+{% endblock %}
+
+{% block content %}
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-3 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-cart-plus"></i> Sales Management
+        </h4>
+        {% if request.session.user_role == 'Admin' or 'add_sale' in request.session.user_permissions %}
+        <a href="{% url 'add_sale' %}" class="btn btn-theme">Add New Sales</a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="box bg-white p-3 rounded-3 shadow mb-4">
+
+                <table class="table table-hover table-list">
+
+                    <thead>
+                        <tr>
+                            <th>Invoice No</th>
+                            <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Total Items</th>
+                            <th>Subtotal</th>
+                            <th>Tax (GST)</th>
+                            <th>Discount</th>
+                            <th>Grand Total</th>
+                            <th>Payment Mode</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for sale in sales %}
+
+                        <tr>
+                            <td>{{ sale.salesInvoiceno }}</td>
+                            <td>{{ sale.salesDate|date:"Y-m-d" }}</td>
+                            <td>{{ sale.salesCustomer.custName }}</td>
+                            <td>{{ sale.salesTotalQuantity }}</td>
+                            <td>₹{{ sale.salesSubTotal }}</td>
+                            <td>₹{{ sale.salesTax }}</td>
+                            <td>₹{{ sale.salesDiscount }}</td>
+                            <td>₹{{ sale.salesGrandTotal }}</td>
+                            <td>{{ sale.salesPaymentMode }}</td>
+
+                            <td>
+                                <span class="badge bg-success">Paid</span>
+                            </td>
+
+                            <td>
+                                <div class="d-flex gap-1">
+
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#invoiceModal{{ sale.id }}">
+                                    View
+                                </button>
+
+                                {% if request.session.user_role == 'Admin' or 'edit_sale' in request.session.user_permissions %}
+                                <a href="{% url 'edit_sale' sale.id %}" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% endif %}
+
+                                {% if request.session.user_role == 'Admin' or 'delete_sale' in request.session.user_permissions %}
+                                <button class="btn btn-sm btn-outline-danger" data-sale-id="{{ sale.id }}"
+                                    data-bs-toggle="modal" data-bs-target="#delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- INVOICE MODALS (Table ke bahar) -->
+
+{% for sale in sales %}
+
+<div class="modal fade" id="invoiceModal{{ sale.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Invoice Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <table class="table table-bordered">
+
+                    <tr>
+                        <th>Invoice No</th>
+                        <td>{{ sale.salesInvoiceno }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ sale.salesDate|date:"Y-m-d" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Customer</th>
+                        <td>{{ sale.salesCustomer.custName }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Products & Items</th>
+                        <td>
+                            <ul class="mb-0 ps-3">
+                                {% for item in sale.salesProducts %}
+
+                                <li>{{ item.product_name }} (Qty: {{ item.quantity }})</li>
+                                {% empty %}
+                                <li>No products recorded</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Total Quantity</th>
+                        <td>{{ sale.salesTotalQuantity }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Subtotal</th>
+                        <td>₹{{ sale.salesSubTotal }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Tax</th>
+                        <td>₹{{ sale.salesTax }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Discount</th>
+                        <td>₹{{ sale.salesDiscount }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Grand Total</th>
+                        <td>₹{{ sale.salesGrandTotal }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Payment Mode</th>
+                        <td>{{ sale.salesPaymentMode }}</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+
+
+<!-----Delete Modal------->
+
+<div class="modal fade" id="delete">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Record</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <h4 class="text-secondary mb-3">Are you sure <br> you want to <span
+                        class="text-danger fw-bold">Delete</span> this record ?</h4>
+                <div class="">
+                    <a class="btn btn-success btn-sm">Yes,Confirm</a>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script src="{% static 'JS/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'JS/jquery-4.0.0.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#toggle-btn').click(function () {
+            //alert('Hi')
+            $('.sidebar').toggleClass('full')
+        })
+    })
+</script>
+
+<script>
+    $('#delete').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var saleId = button.data('sale-id') // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('.btn-success').attr('href', '/delete_sale/' + saleId + '/')
+    })
+</script>
+{% endblock %}

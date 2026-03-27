@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+EditSupplier
+{% endblock %}
+{% block content %}
+
+
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-truck"></i> Edit Supplier
+        </h4>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="box bg-white p-4 rounded-3 shadow">
+        {% csrf_token %}
+
+        <h6 class="text-primary mb-3">Supplier Information</h6>
+
+        <div class="row g-3">
+
+            <!-- Supplier Name -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="Name" value="{{ supplier.supName }}" class="form-control" id="supplierName" placeholder="Supplier Name" required>
+                    <label class="form-label text-secondary">Supplier Name *</label>
+                </div>
+            </div>
+
+            <!-- Supplier Code -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="Code" value="{{ supplier.supCode }}" class="form-control" id="supplierCode" placeholder="Supplier Code">
+                    <label class="form-label text-secondary">Supplier Code</label>
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="tel" name="Phone" value="{{ supplier.supPhone }}" class="form-control" id="phone" placeholder="Phone Number">
+                    <label class="form-label text-secondary">Phone Number *</label>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="email" name="Email" value="{{ supplier.supEmail }}" class="form-control" id="email" placeholder="Email">
+                    <label class="form-label text-secondary">Email Address</label>
+                </div>
+            </div>
+
+            <!-- GST Number -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="GST" value="{{ supplier.supGST }}" class="form-control" id="gst" placeholder="GST Number">
+                    <label class="form-label text-secondary">GST Number</label>
+                </div>
+            </div>
+
+            <!-- City -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="City" value="{{ supplier.supCity }}" class="form-control" id="city" placeholder="City">
+                    <label class="form-label text-secondary">City</label>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="col-md-12">
+                <div class="form-floating">
+                    <textarea class="form-control" name="Address" id="address" placeholder="Address" style="height:100px;">{{ supplier.supAddress }}</textarea>
+                    <label class="form-label text-secondary" value="{{ supplier.supAddress }}">Address</label>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="col-md-6">
+    <label class="form-label mb-1 text-secondary">Status</label>
+    <div class="form-switch">
+        <input type="checkbox" class="form-check-input" name="Status"
+        {% if supplier.supStatus %}checked{% endif %}>
+        Active / Deactivate
+    </div>
+</div>
+
+        </div>
+
+        <div class="text-end mt-4">
+            <button class="btn btn-theme px-4" type="submit">
+                <i class="bi bi-save"></i> Save Supplier
+            </button>
+
+            <a href="{% url 'suppliers' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+
+
+</div>
+
+
+  
+      <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+   
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+    </script>
+{% endblock %}
+</body>
+</html>

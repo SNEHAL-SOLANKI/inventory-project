@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Edit Purchase
+{% endblock %}
+{% block content %}
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-cart-plus-fill"></i> Edit Purchase
+        </h4>
+    </div>
+
+    <form method="post" class="box bg-white p-4 rounded-3 shadow">
+        {% csrf_token %}
+        <h6 class="text-primary mb-3">Purchase Information</h6>
+
+        <div class="row g-3">
+
+            <!-- Supplier Name -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="purchaseSupplier" value="{{ purchase.purchaseSupplier }}" id="supplier">
+                        {% for sup in suppliers %}
+                            <option value="{{sup.supName}}"{% if sup.supName == purchase.purchaseSupplier %}selected{% endif %}>{{sup.supName}}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label text-secondary">Supplier Name *</label>
+                </div>
+            </div>
+
+            <!-- Invoice Number -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="text" class="form-control" value="{{ purchase.purchaseInvoiceNo }}"readonly>
+                  <label>Invoice Number</label>
+                </div>
+            </div>
+
+            <!-- Purchase Date -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="date" class="form-control" name="PurchaseDate" value="{{ purchase.purchaseDate }}" id="purchaseDate">
+                    <label class="form-label text-secondary">Purchase Date *</label>
+                </div>
+            </div>
+
+            
+            <!-- Product -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="Product" value="{{ purchase.purchaseProduct }}" id="product">
+                        {% for p in products %}
+                        <option value="{{p.id}}"{% if p.id|stringformat:"s" == purchase.purchaseProduct %}selected{% endif %}>{{p.prodName}}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label text-secondary">Product *</label>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="Quantity" value="{{ purchase.purchaseQuantity }}" id="quantity" placeholder="Quantity">
+                    <label class="form-label text-secondary">Quantity *</label>
+                </div>
+            </div>
+
+            <!-- Purchase Price -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="PurchasePrice" value="{{ purchase.purchasePrice }}" id="price" placeholder="Purchase Price">
+                    <label class="form-label text-secondary">Purchase Price *</label>
+                </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="TotalAmount" value="{{ purchase.purchaseTotalAmount }}" id="totalAmount" placeholder="Total Amount">
+                    <label class="form-label text-secondary">Total Amount</label>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="PaymentStatus" value="{{ purchase.purchasePaymentStatus }}"    id="paymentStatus">
+                        <option>Paid</option>
+                        <option>Pending</option>
+                        <option>Partial</option>
+                    </select>
+                    <label class="form-label text-secondary">Payment Status</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-end mt-4">
+            <button type="submit" class="btn btn-theme">Save</button>
+            <a href="{% url 'purchases' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+
+</div>
+
+  
+      <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+   
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+    </script>
+{% endblock %}
+</body>
+</html>

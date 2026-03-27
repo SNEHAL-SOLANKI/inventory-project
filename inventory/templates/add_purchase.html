@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Addpurchase
+{% endblock %}
+{% block content %}
+
+<div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-cart-plus-fill"></i> Add New Purchase
+        </h4>
+    </div>
+
+    <form method="post" class="box bg-white p-4 rounded-3 shadow">
+        {% csrf_token %}
+        <h6 class="text-primary mb-3">Purchase Information</h6>
+
+        <div class="row g-3">
+
+            <!-- Supplier Name -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="purchaseSupplier" id="supplier">
+                        <option value="">Select Supplier</option>
+                        {% for sup in suppliers %}
+                        <option value="{{ sup.supName }}">{{ sup.supName }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label text-secondary">Supplier Name *</label>
+                </div>
+            </div>
+
+            <!-- Invoice Number -->
+            <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" class="form-control" name="InvoiceNo" value="{{invoice_no}}" readonly>
+              <label>Invoice Number</label>
+           </div>
+        </div>
+
+            <!-- Purchase Date -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="date" class="form-control" name="PurchaseDate" id="purchaseDate">
+                    <label class="form-label text-secondary">Purchase Date *</label>
+                </div>
+            </div>
+
+            
+            <!-- Product -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="Product" id="product">
+                        <option>Select Product</option>
+                        {% for p in products %}
+                        <option value="{{p.id}}">{{p.prodName}}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label text-secondary">Product *</label>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="Quantity" id="quantity" placeholder="Quantity">
+                    <label class="form-label text-secondary">Quantity *</label>
+                </div>
+            </div>
+
+            <!-- Purchase Price -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="PurchasePrice" id="price" placeholder="Purchase Price">
+                    <label class="form-label text-secondary">Purchase Price *</label>
+                </div>
+            </div>
+
+            <!-- Total Amount -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" class="form-control" name="TotalAmount" id="totalAmount" placeholder="Total Amount">
+                    <label class="form-label text-secondary">Total Amount</label>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="PaymentStatus" id="paymentStatus">
+                        <option>Paid</option>
+                        <option>Pending</option>
+                        <option>Partial</option>
+                    </select>
+                    <label class="form-label text-secondary">Payment Status</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-end mt-4">
+            <button class="btn btn-theme px-4">
+                <i class="bi bi-save"></i> Save Purchase
+            </button>
+
+            <a href="{% url 'purchases' %}" class="btn btn-secondary px-4">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+  
+      <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+   
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+    </script>
+{% endblock %}
+</body>
+</html>

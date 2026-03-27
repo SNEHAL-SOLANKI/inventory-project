@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Addproduct
+{% endblock %}
+{% block content %}
+
+            
+
+    <div class="inner-content">
+
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h4 class="m-0 Dashboard_H">
+            <i class="bi bi-box-seam"></i> Add New Inventory Item
+        </h4>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="box bg-white p-4 rounded-3 shadow">
+        {% csrf_token %}
+
+        <h6 class="text-primary mb-3">Product Information</h6>
+
+        <div class="row g-3">
+
+            
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="Name" class="form-control" id="productName" placeholder="Product Name" required>
+                    <label class="form-label text-secondary">Product Name *</label>
+                </div>
+            </div>
+
+            
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" name="Code" class="form-control" id="productCode" placeholder="Product Code">
+                    <label class="form-label text-secondary">Product Code</label>
+                </div>
+            </div>
+
+            
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="Category" id="category">
+                        <option value="">Select Category</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.catName }}</option>
+                        {% endfor %}
+                    </select>
+                    <label class="form-label text-secondary">Category *</label>
+                </div>
+            </div>
+
+           
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" name="PurchasePrice" class="form-control" id="purchasePrice" placeholder="Purchase Price">
+                    <label class="form-label text-secondary">Purchase Price *</label>
+                </div>
+            </div>
+
+            
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" name="SellingPrice" class="form-control" id="sellingPrice" placeholder="Selling Price">
+                    <label class="form-label text-secondary">Selling Price *</label>
+                </div>
+            </div>
+
+           
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="number" name="StockQuantity" class="form-control" id="stockQty" placeholder="Stock Quantity">
+                    <label class="form-label text-secondary">Stock Quantity *</label>
+                </div>
+            </div>
+            
+
+            <div class="col-md-6">
+            <div class="form-floating">
+            <input type="number" name="ReorderLevel" class="form-control" placeholder="Reorder Level">
+            <label class="form-label text-secondary">Reorder Level</label>
+            </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-floating">
+            <input type="number" name="ReorderQuantity" class="form-control" placeholder="Reorder Quantity">
+            <label class="form-label text-secondary">Reorder Quantity</label>
+            </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-floating">
+            <input type="number" name="Profit" class="form-control" id="profit" placeholder="Profit" readonly>
+            <label class="form-label text-secondary">Profit</label>
+            </div>
+            </div>
+                    
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="Unit" id="unit">
+                        <option>Pieces</option>
+                        <option>Kg</option>
+                        <option>Liter</option>
+                        <option>Box</option>
+                    </select>
+                    <label class="form-label text-secondary">Unit</label>
+                </div>
+            </div>
+
+            
+            {% comment %} <div class="col-md-6">
+            <div class="form-floating">
+                <input type="text" name="Barcode" class="form-control" id="barcode" placeholder="Barcode" readonly>
+                <label class="form-label text-secondary">Barcode (Auto Generated)</label>
+            </div>
+        </div> {% endcomment %}
+
+            
+            <div class="col-md-6">
+                <label class="form-label text-secondary">Product Image</label>
+                <input type="file" name="Image" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <select class="form-select" name="Supplier" id="category">
+                        <option value="">Select Supplier</option>
+                        {% for sup in suppliers %}
+                        <option value="{{sup.supName}}">{{sup.supName}}</option>
+                        {% endfor %}
+                        </select>
+                    <label class="form-label text-secondary">Supplier *</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label text-secondary">Last Update</label>
+                <input type="date" name="LastUpdate" class="form-control" id="lastUpdate" placeholder="Last Update">
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-floating">
+                    <textarea class="form-control" name="Description" id="description" placeholder="Description" style="height:100px;"></textarea>
+                    <label class="form-label text-secondary">Description</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-end mt-4">
+            <button class="btn btn-theme px-4">
+                <i class="bi bi-save"></i> Save Product
+            </button>
+
+            <a href="{% url 'inventory' %}" class="btn btn-secondary px-4">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+$("#sellingPrice, #purchasePrice").keyup(function(){
+
+    var purchase = parseFloat($("#purchasePrice").val()) || 0
+    var selling = parseFloat($("#sellingPrice").val()) || 0
+
+    var profit = selling - purchase
+
+    $("#profit").val(profit)
+
+})
+
+</script>
+
+
+
+  
+      <!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+   
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+    </script>
+
+{% endblock %}
+</body>
+</html>

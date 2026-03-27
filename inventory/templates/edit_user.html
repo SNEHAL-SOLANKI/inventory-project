@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+EditUser
+{% endblock %}
+{% block content %}
+
+<div class="inner-content">
+
+            <div class="d-flex justify-content-between mb-4 align-items-center">
+                <h4 class="m-0 Dashboard_H">
+                    <i class="bi bi-person-plus-fill"></i> Edit User
+                </h4>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="box bg-white p-4 rounded-3 shadow">
+                {% csrf_token %}
+
+                <!-- Basic Info -->
+                <h6 class="text-secondary mb-3">Basic Information</h6>
+                <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="file" name="ProfileImage" value="{{ user.ProfileImage }}" class="form-control" id="profileImage" placeholder="Profile Image">
+                        <label for="profileImage">Profile</label>
+                    </div>
+                </div>
+ 
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" name="Fname" value="{{ user.userFname }}" class="form-control" id="fullName" placeholder="Full Name">
+                        <label for="fullName">Full Name</label>
+                    </div>
+                </div>
+                </div>
+                {% comment %} <div class="row g-3">
+
+                    
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" name="Email" class="form-control" id="email" placeholder="Email">
+                            <label for="email">Email Address</label>
+                        </div>
+                    </div>
+
+                </div> {% endcomment %}
+
+                <hr class="my-4">
+
+                <!-- Login Credentials -->
+                <h6 class="text-secondary mb-3">Login Credentials</h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="Username" value="{{ user.userUsername }}" class="form-control" id="username" placeholder="Username">
+                            <label for="username">Username</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="password" name="Password" value="{{ user.userPassword }}" class="form-control" id="password" placeholder="Password">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" name="Email" value="{{ user.userEmail }}" class="form-control" id="email" placeholder="Email">
+                            <label for="email">Email Address</label>
+                        </div>
+                    </div>
+
+                    {% comment %} <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="date" name="LastLogin" value="{{ user.userLastLogin }}" class="form-control" id="lastLogin" placeholder="Last Login">
+                            <label for="lastLogin">Last Login</label>
+                        </div>
+                    </div> {% endcomment %}
+
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Role & Status -->
+                <h6 class="text-secondary mb-3">Role & Status</h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="role" name="Role" aria-label="User Role" required>
+                                <option value="">Select Role</option>
+                                {% for r in roles %}
+                                <option value="{{ r.name }}" {% if user.userRole == r.name %}selected{% endif %}>{{ r.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="role">User Role</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" name="Status"
+                            {% if user.userStatus %}checked{% endif %}>
+                            <label class="form-check-label ms-2">Active Account</label>
+                        </div>
+                    </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-theme">Save</button>
+                    <a href="{% url 'manage_users' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-----Delete Modal------->
+
+    <div class="modal fade" id="delete">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Record</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-secondary mb-3">Are you sure <br> you want to <span class="text-danger fw-bold">Delete</span> this record ?</h4>
+                    <div class="">
+                    <button class="btn btn-success btn-sm">Yes,Confirm</button>
+                    <button class="btn btn-danger btn-sm" data-bs-dismiss="modal">No,Cancel</button>
+                </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+{% block extra_js %}
+<script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+</script>
+{% endblock %}
+</body>
+</html>

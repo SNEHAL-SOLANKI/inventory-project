@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+xyz Roles
+{% endblock %}
+{% block extra_css %}
+<style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .card-custom {
+            border-radius: 15px;
+        }
+        .badge-role {
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="inner-content">
+    
+
+    <!-- Page Header -->
+           <div class="d-flex justify-content-between mb-3 align-items-center">
+                    <h4 class="m-0 Dashboard_H">
+                    <i class="bi bi-shield-lock"></i> Add Role
+                    </h4>
+           </div>
+
+    
+<!-- Create Role Modal -->
+<form method="post" enctype="multipart/form-data" class="box bg-white p-4 rounded-3 shadow" tabindex="-1">
+    {% csrf_token %}       
+                <h6 class="text-primary mb-3">Create New Role</h5>
+                
+            <div class="row g-3">
+
+                
+                   
+                    <div class="col-md-6">
+                        <label class="form-label mb-1 text-secondary">Role Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter Role Name">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label mb-1 text-secondary">Description</label>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Enter Description"></textarea>
+                    </div>
+
+                    <hr>
+
+                    <h6>Assign Permissions</h6>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <strong>Inventory Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_inventory"> View Inventory<br>
+                            <input type="checkbox" name="permissions[]" value="add_inventory"> Add Inventory<br>
+                            <input type="checkbox" name="permissions[]" value="edit_inventory"> Edit Inventory<br>
+                            <input type="checkbox" name="permissions[]" value="delete_inventory"> Delete Inventory<br>
+                        </div>
+
+                        <div class="col-md-4">
+                            <strong>Category Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_categories"> View Categories<br>
+                            <input type="checkbox" name="permissions[]" value="add_category"> Add Category<br>
+                            <input type="checkbox" name="permissions[]" value="edit_category"> Edit Category<br>
+                            <input type="checkbox" name="permissions[]" value="delete_category"> Delete Category<br>
+                        </div>
+
+                        <div class="col-md-4">
+                            <strong>Supplier Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_suppliers"> View Suppliers<br>
+                            <input type="checkbox" name="permissions[]" value="add_supplier"> Add Supplier<br>
+                            <input type="checkbox" name="permissions[]" value="edit_supplier"> Edit Supplier<br>
+                            <input type="checkbox" name="permissions[]" value="delete_supplier"> Delete Supplier<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>Customer Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_customers"> View Customers<br>
+                            <input type="checkbox" name="permissions[]" value="add_customer"> Add Customer<br>
+                            <input type="checkbox" name="permissions[]" value="edit_customer"> Edit Customer<br>
+                            <input type="checkbox" name="permissions[]" value="delete_customer"> Delete Customer<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>Purchase Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_purchases"> View Purchases<br>
+                            <input type="checkbox" name="permissions[]" value="add_purchase"> Add Purchase<br>
+                            <input type="checkbox" name="permissions[]" value="edit_purchase"> Edit Purchase<br>
+                            <input type="checkbox" name="permissions[]" value="delete_purchase"> Delete Purchase<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>Sale Module</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_sales"> View Sales<br>
+                            <input type="checkbox" name="permissions[]" value="add_sale"> Add Sale<br>
+                            <input type="checkbox" name="permissions[]" value="edit_sale"> Edit Sale<br>
+                            <input type="checkbox" name="permissions[]" value="delete_sale"> Delete Sale<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>User Management</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_users"> View Users<br>
+                            <input type="checkbox" name="permissions[]" value="add_user"> Add User<br>
+                            <input type="checkbox" name="permissions[]" value="edit_user"> Edit User<br>
+                            <input type="checkbox" name="permissions[]" value="delete_user"> Delete User<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>Role Management</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_roles"> View Roles<br>
+                            <input type="checkbox" name="permissions[]" value="add_role"> Add Role<br>
+                            <input type="checkbox" name="permissions[]" value="edit_role"> Edit Role<br>
+                            <input type="checkbox" name="permissions[]" value="delete_role"> Delete Role<br>
+                        </div>
+
+                        <div class="col-md-4 mt-3">
+                            <strong>Reports</strong><br>
+                            <input type="checkbox" name="permissions[]" value="view_reports"> View Reports<br>
+                        </div>
+
+                    </div>
+
+                
+
+                </div>
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-theme">Save Role</button>
+                <a href="{% url 'roles' %} " type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}    
+
+
+    <script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+{% block extra_js %}
+    <script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+
+             $('.cat').click(function(){
+                alert('Hi');
+                $('.cl').addClass('show')
+            })
+        })
+    </script>
+{% endblock %}    
+</body>
+</html>

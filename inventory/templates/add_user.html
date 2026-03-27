@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+AddUser
+{% endblock %}
+{% block content %}
+
+<div class="inner-content">
+
+            <div class="d-flex justify-content-between mb-4 align-items-center">
+                <h4 class="m-0 Dashboard_H">
+                    <i class="bi bi-person-plus-fill"></i> Add New User
+                </h4>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="box bg-white p-4 rounded-3 shadow">
+                {% csrf_token %}
+
+                <!-- Basic Info -->
+                <h6 class="text-secondary mb-3">Basic Information</h6>
+                <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="file" name="ProfileImage" class="form-control" id="profileImage" placeholder="Profile Image">
+                        <label for="profileImage">Profile</label>
+                    </div>
+                </div>
+ 
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" name="Fname" class="form-control" id="fullName" placeholder="Full Name">
+                        <label for="fullName">Full Name</label>
+                    </div>
+                </div>
+                </div>
+                {% comment %} <div class="row g-3">
+
+                    
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" name="Email" class="form-control" id="email" placeholder="Email">
+                            <label for="email">Email Address</label>
+                        </div>
+                    </div>
+
+                </div> {% endcomment %}
+
+                <hr class="my-4">
+
+                <!-- Login Credentials -->
+                <h6 class="text-secondary mb-3">Login Credentials</h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" name="Username" class="form-control" id="username" placeholder="Username">
+                            <label for="username">Username</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="password" name="Password" class="form-control" id="password" placeholder="Password">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" name="Email" class="form-control" id="email" placeholder="Email">
+                            <label for="email">Email Address</label>
+                        </div>
+                    </div>
+
+                    {% comment %} <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="date" name="LastLogin" class="form-control" id="lastLogin" placeholder="Last Login">
+                            <label for="lastLogin">Last Login</label>
+                        </div>
+                    </div> {% endcomment %}
+
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Role & Status -->
+                <h6 class="text-secondary mb-3">Role & Status</h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="role" name="Role" aria-label="User Role" required>
+                                <option value="">Select Role</option>
+                                {% for r in roles %}
+                                <option value="{{ r.name }}">{{ r.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="role">User Role</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" name="Status" checked>
+                            <label class="form-check-label ms-2">Active Account</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-4">
+                    <button class="btn btn-theme px-4">
+                        <i class="bi bi-save"></i> Create User
+                    </button>
+
+                    <a href="{% url 'add_user' %}" class="btn btn-secondary px-4">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script src="{% static 'JS\bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'JS\jquery-4.0.0.min.js' %}"></script>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+{% block extra_js %}
+<script>
+        $(document).ready(function(){
+            $('#toggle-btn').click(function(){
+                //alert('Hi')
+                $('.sidebar').toggleClass('full')
+            })
+        })
+</script>
+{% endblock %}
+</body>
+</html>
