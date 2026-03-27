@@ -128,7 +128,7 @@ Addproduct
                     <select class="form-select" name="Supplier" id="category">
                         <option value="">Select Supplier</option>
                         {% for sup in suppliers %}
-                        <option value="{{sup.supName}}">{{sup.supName}}</option>
+                        <option value="{{sup.id}}">{{sup.supName}}</option>
                         {% endfor %}
                         </select>
                     <label class="form-label text-secondary">Supplier *</label>

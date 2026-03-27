@@ -133,14 +133,26 @@ Inventory
 
                                     <td>{{ prod.prodName }}</td>
                                     <td>{{ prod.prodCode }}</td>
-                                    <td>{{ prod.prodCategory }}</td>
+                                    <td>
+                                        {% if prod.prodCategory %}
+                                            {{ prod.prodCategory.catName }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
                                     <td>{{ prod.prodPurchasePrice }}</td>
                                     <td>{{ prod.prodSellingPrice }}</td>
                                     <td class="profit">{{ prod.profit }}</td>
                                     <td class="stock">{{ prod.prodStockQty }}</td>
                                     <td>{{ prod.reorderLevel }}</td>
                                     <td>{{ prod.reorderQuantity }}</td>
-                                    <td>{{ prod.prodSupplier }}</td>
+                                    <td>
+                                        {% if prod.prodSupplier %}
+                                            {{ prod.prodSupplier.supName }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td> 
                                     <td>{{ prod.prodLastUpdated|date:"d M Y H:i" }}</td>
 
                                     {% if prod.prodStatus %}

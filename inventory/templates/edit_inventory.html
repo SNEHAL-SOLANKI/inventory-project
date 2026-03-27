@@ -40,16 +40,21 @@ Addproduct
 
             
             <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-select" name="Category" value="{{ inventory.prodCategory }}" id="category">
-                        <option value="">Select Category</option>
-                        {% for cat in categories %}
-                            <option value="{{ cat.catName }}">{{ cat.catName }}</option>
-                        {% endfor %}
-                    </select>
-                    <label class="form-label text-secondary">Category *</label>
-                </div>
+            <div class="form-floating">
+                <select class="form-select" name="Category" id="category">
+                    <option value="">Select Category</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}"
+                        {% if inventory.prodCategory and inventory.prodCategory.id == cat.id %}
+                            selected
+                        {% endif %}>
+                            {{ cat.catName }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <label class="form-label text-secondary">Category *</label>
             </div>
+         </div>
 
            
             <div class="col-md-6">
@@ -125,14 +130,16 @@ Addproduct
             </div>
             
             <div class="col-md-6">
-            <select class="form-select" name="Supplier">
-            <option value="">Select Supplier</option>
-            {% for sup in suppliers %}
-            <option value="{{sup.supName}}"
-            {% if sup.supName == inventory.prodSupplier %}selected{% endif %}>
-            {{sup.supName}}
-            </option>
-            {% endfor %}
+            <select name="Supplier" class="form-select">
+                <option value="">Select Supplier</option>
+                {% for sup in suppliers %}
+                    <option value="{{ sup.id }}"
+                    {% if inventory.prodSupplier and inventory.prodSupplier.id == sup.id %}
+                        selected
+                    {% endif %}>
+                        {{ sup.supName }}
+                    </option>
+                {% endfor %}
             </select>
             </div>
 

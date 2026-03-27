@@ -48,8 +48,8 @@ class InventoryMaster(Document):
     prodCode = StringField()
     prodCategory = ReferenceField(CategoryMaster)
     
-    prodPurchasePrice = StringField()
-    prodSellingPrice = StringField()
+    prodPurchasePrice = FloatField()
+    prodSellingPrice = FloatField()
     prodStockQty = StringField()
     
     reorderLevel = IntField(default=5)
@@ -80,9 +80,9 @@ class PurchaseMaster(Document):
     purchaseDate = DateTimeField(default=datetime.now)
     purchaseSupplier = ReferenceField(SupplierMaster, null=True)
     purchaseProduct = ReferenceField(InventoryMaster, reverse_delete_rule=NULLIFY, null=True)
-    purchaseQuantity = StringField()
-    purchasePrice = StringField()
-    purchaseTotalAmount = StringField()
+    purchaseQuantity = IntField()
+    purchasePrice = FloatField()
+    purchaseTotalAmount = FloatField()
     purchasePaymentStatus = StringField()
     
 class SalesMaster(Document):

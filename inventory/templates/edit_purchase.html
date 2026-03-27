@@ -20,16 +20,18 @@ Edit Purchase
         <div class="row g-3">
 
             <!-- Supplier Name -->
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <select class="form-select" name="purchaseSupplier" value="{{ purchase.purchaseSupplier }}" id="supplier">
-                        {% for sup in suppliers %}
-                            <option value="{{sup.supName}}"{% if sup.supName == purchase.purchaseSupplier %}selected{% endif %}>{{sup.supName}}</option>
-                        {% endfor %}
-                    </select>
-                    <label class="form-label text-secondary">Supplier Name *</label>
-                </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select class="form-select" name="purchaseSupplier" id="supplier">
+                    {% for sup in suppliers %}
+                        <option value="{{ sup.id }}" {% if purchase.purchaseSupplier and purchase.purchaseSupplier.id == sup.id %}selected{% endif %}>
+                            {{ sup.supName }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <label class="form-label text-secondary">Supplier Name *</label>
             </div>
+        </div>
 
             <!-- Invoice Number -->
             <div class="col-md-6">

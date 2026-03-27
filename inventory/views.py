@@ -1,5 +1,5 @@
 from itertools import product
-
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from inventory.models import AdminMaster, CategoryMaster, CustomerMaster, InventoryMaster, ManageUser, PurchaseMaster, RoleMaster, SalesMaster, SupplierMaster,SalesMaster
@@ -165,12 +165,12 @@ def add_inventory(request):
         name = request.POST.get('Name')
 
         category_id = request.POST.get('Category')
-        supplier_id = request.POST.get('Supplier')
+        supplier_id = request.POST.get("Supplier")
 
         # ✅ correct FK fetch
-        category = CategoryMaster.objects(id=category_id).first()
+        category = CategoryMaster.objects(id=category_id).first() if category_id else None
         if supplier_id:
-            supplier = SupplierMaster.objects(id=supplier_id).first()
+            supplier = SupplierMaster.objects(id=supplier_id).first() if supplier_id else None
         else:
             supplier = None
 
@@ -519,44 +519,50 @@ def add_purchase(request):
     suppliers = SupplierMaster.objects.all()
     products = InventoryMaster.objects.all()
 
-    # Auto generate invoice
     invoice_no = generate_invoice()
 
     if request.method == 'POST':
 
         purchase_date = request.POST.get('PurchaseDate')
-        supplier_id = request.POST.get('purchaseSupplier')
+        supplier_id = request.POST.get('Supplier')
         product_id = request.POST.get('Product')
 
+        # Validate Supplier
         supplier_obj = SupplierMaster.objects(id=supplier_id).first() if supplier_id else None
-        product_obj = InventoryMaster.objects(id=product_id).first() if product_id else None
+        if not supplier_obj:
+            messages.error(request, "Please select a valid supplier.")
+            return redirect('add_purchase')
 
-        quantity = request.POST.get('Quantity')
-        purchase_price = request.POST.get('PurchasePrice')
-        total_amount = request.POST.get('TotalAmount')
+        # Validate Product
+        product_obj = InventoryMaster.objects(id=product_id).first() if product_id else None
+        if not product_obj:
+            messages.error(request, "Please select a valid product.")
+            return redirect('add_purchase')
+
+        quantity = int(request.POST.get('Quantity', 0))
+        purchase_price = float(request.POST.get('PurchasePrice', 0))
+        total_amount = float(request.POST.get('TotalAmount', 0))
         payment_status = request.POST.get('PaymentStatus')
 
-        # Get product from inventory
+        # Update inventory stock
         invData = product_obj
-
         if invData:
             current_stock = int(invData.prodStockQty)
-            new_stock = current_stock + int(quantity)
-
+            new_stock = current_stock + quantity
             invData.prodStockQty = str(new_stock)
             invData.save()
 
+        # Save purchase
         purchase = PurchaseMaster(
             purchaseInvoiceNo=invoice_no,
             purchaseDate=datetime.strptime(purchase_date, "%Y-%m-%d") if purchase_date else datetime.now(),
             purchaseSupplier=supplier_obj,
-            purchaseProduct=product_obj, 
+            purchaseProduct=product_obj,
             purchaseQuantity=quantity,
             purchasePrice=purchase_price,
             purchaseTotalAmount=total_amount,
             purchasePaymentStatus=payment_status
         )
-
         purchase.save()
 
         return redirect('purchases')
@@ -571,25 +577,33 @@ def add_purchase(request):
 def edit_purchase(request, purchase_id):
 
     purchase = PurchaseMaster.objects(id=purchase_id).first()
-
     suppliers = SupplierMaster.objects.all()
     products = InventoryMaster.objects.all()
 
     if request.method == 'POST':
 
         purchase_date = request.POST.get('PurchaseDate')
-        purchase_supplier = request.POST.get('purchaseSupplier')
-
+        supplier_id = request.POST.get('purchaseSupplier')
         product_id = request.POST.get('Product')
-        product_obj = InventoryMaster.objects(id=product_id).first()
 
-        quantity = request.POST.get('Quantity')
-        purchase_price = request.POST.get('PurchasePrice')
-        total_amount = request.POST.get('TotalAmount')
+        # Validate supplier
+        supplier_obj = SupplierMaster.objects(id=supplier_id).first() if supplier_id else None
+        if not supplier_obj:
+            messages.error(request, "Please select a valid supplier.")
+            return redirect('edit_purchase', purchase_id=purchase_id)
+
+        # Validate product
+        product_obj = InventoryMaster.objects(id=product_id).first() if product_id else None
+        if not product_obj:
+            messages.error(request, "Please select a valid product.")
+            return redirect('edit_purchase', purchase_id=purchase_id)
+
+        quantity = int(request.POST.get('Quantity', 0))
+        purchase_price = float(request.POST.get('PurchasePrice', 0))
+        total_amount = float(request.POST.get('TotalAmount', 0))
         payment_status = request.POST.get('PaymentStatus')
 
-        purchase.purchaseDate = datetime.strptime(purchase_date,"%Y-%m-%d") if purchase_date else datetime.now()
-        supplier_obj = SupplierMaster.objects(id=purchase_supplier).first() if purchase_supplier else None
+        purchase.purchaseDate = datetime.strptime(purchase_date, "%Y-%m-%d") if purchase_date else datetime.now()
         purchase.purchaseSupplier = supplier_obj
         purchase.purchaseProduct = product_obj
         purchase.purchaseQuantity = quantity
@@ -602,9 +616,9 @@ def edit_purchase(request, purchase_id):
         return redirect('purchases')
 
     return render(request,'edit_purchase.html',{
-        "purchase":purchase,
-        "suppliers":suppliers,
-        "products":products
+        "purchase": purchase,
+        "suppliers": suppliers,
+        "products": products
     })
 @permission_required('delete_purchase')
 def delete_purchase(request, purchase_id):

@@ -7,6 +7,15 @@ Addpurchase
 
 <div class="inner-content">
 
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
     <div class="d-flex justify-content-between mb-4 align-items-center">
         <h4 class="m-0 Dashboard_H">
             <i class="bi bi-cart-plus-fill"></i> Add New Purchase
@@ -22,10 +31,10 @@ Addpurchase
             <!-- Supplier Name -->
             <div class="col-md-6">
                 <div class="form-floating">
-                    <select class="form-select" name="purchaseSupplier" id="supplier">
+                    <select class="form-select" name="Supplier" id="supplier">
                         <option value="">Select Supplier</option>
                         {% for sup in suppliers %}
-                        <option value="{{ sup.supName }}">{{ sup.supName }}</option>
+                            <option value="{{ sup.id }}">{{ sup.supName }}</option>
                         {% endfor %}
                     </select>
                     <label class="form-label text-secondary">Supplier Name *</label>
@@ -53,9 +62,9 @@ Addpurchase
             <div class="col-md-6">
                 <div class="form-floating">
                     <select class="form-select" name="Product" id="product">
-                        <option>Select Product</option>
+                        <option value="">Select Product</option>
                         {% for p in products %}
-                        <option value="{{p.id}}">{{p.prodName}}</option>
+                            <option value="{{ p.id }}">{{ p.prodName }}</option>
                         {% endfor %}
                     </select>
                     <label class="form-label text-secondary">Product *</label>

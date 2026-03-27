@@ -40,11 +40,17 @@ Purchase
                         </tr>
                         {% for purchase in purchases %}
                         <tr>
-                                <tr>
+                                
                                     <td>{{ forloop.counter }}</td>
                                     <td>{{ purchase.purchaseInvoiceNo }}</td>
                                     <td>{{ purchase.purchaseDate }}</td>
-                                    <td>{{ purchase.purchaseSupplier }}</td>
+                                    <td>
+                                        {% if purchase.purchaseSupplier %}
+                                            {{ purchase.purchaseSupplier.supName }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
                                     <td>{{ purchase.purchaseProduct.prodName }}</td>
                                     <td>{{ purchase.purchaseTotalAmount }}</td>
                                     <td>₹50</td>
@@ -61,7 +67,7 @@ Purchase
                                         {% endif %}
                                         </div>
                                     </td>
-                                    </tr>
+                                </tr>
 
                         {% endfor %}          
          
