@@ -5,7 +5,7 @@ ManageUsers
 {% endblock %}
 {% block content %}
         <!-- Inner Content -->
-        <div class="inner-content">
+    <div class="inner-content">
 
             <!-- Header -->
             <div class="d-flex justify-content-between mb-4 align-items-center">
@@ -20,7 +20,7 @@ ManageUsers
                 {% endif %}
             </div>
 
-            <!-- Search Box -->
+            {% comment %} <!-- Search Box -->
             <div class="box bg-white p-3 rounded-3 shadow mb-4">
                 <div class="row">
                     <div class="col-md-6">
@@ -46,8 +46,8 @@ ManageUsers
 
                     
 
-                </div>
-            </div>
+                </div> {% endcomment %}
+           
 
             <!-- Users Table -->
             <div class="box bg-white p-3 rounded-3 shadow">
@@ -58,7 +58,7 @@ ManageUsers
                         
                         <tr>
                             <th>NO</th>
-                            <th>Profile</th>
+                            {% comment %} <th>Profile</th> {% endcomment %}
                             <th>Full Name</th>
                             <th>Username</th>
                             <th>Password</th>
@@ -74,7 +74,7 @@ ManageUsers
                         {% for user in users %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><img src="{% url 'get_user_profile' user.id %}" width="35" class="rounded-circle"></td>
+                            {% comment %} <td><img src="{% url 'get_user_profile' user.id %}" width="35" class="rounded-circle"></td> {% endcomment %}
                             <td>{{ user.userFname }}</td>
                             <td>{{ user.userUsername }}</td>
                             <td>{{ user.userPassword }}</td>
@@ -93,9 +93,9 @@ ManageUsers
                                 <a class="btn btn-sm btn-outline-success" href="{% url 'edit_user' user.id %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit User"><i class="bi bi-pencil"></i></a>
                                 {% endif %}
 
-                                {% if request.session.user_role == 'Admin' or 'edit_user' in request.session.user_permissions %}
+                                {% comment %} {% if request.session.user_role == 'Admin' or 'edit_user' in request.session.user_permissions %}
                                 <button class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Reset Password"><i class="bi bi-arrow-repeat"></i></button>
-                                {% endif %}
+                                {% endif %} {% endcomment %}
 
                                 {% if request.session.user_role == 'Admin' or 'delete_user' in request.session.user_permissions %}
                                 <button class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete User" data-user-id="{{ user.id }}" data-bs-toggle="modal" data-bs-target="#delete"><i class="bi bi-trash"></i></button>
@@ -110,10 +110,9 @@ ManageUsers
 
             </div>
 
-        </div>
     </div>
-</div>
-
+    
+ 
 
 <!-- Delete Modal -->
 <div class="modal fade" id="delete">

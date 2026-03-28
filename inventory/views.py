@@ -1060,7 +1060,12 @@ def reports(request):
         for purchase in all_purchases:
             try:
                 amt = float(purchase.purchaseTotalAmount or 0)
-                party = getattr(purchase, 'purchaseSupplier', "Unknown Supplier")
+                supplier_obj = getattr(purchase, 'purchaseSupplier', None)
+
+                if supplier_obj and hasattr(supplier_obj, 'supName'):
+                    party = supplier_obj.supName
+                else:
+                    party = "Unknown Supplier"
                 p_date = getattr(purchase, 'purchaseDate', None)
 
                 report_details.append({
