@@ -22,7 +22,7 @@ AddCategory
     <div class="row g-3">
 
         <!-- Category Name -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-floating">
                 <input type="text" name="Name" class="form-control" id="categoryName" placeholder="Category Name" required>
                 <label class="form-label mb-1 text-secondary">Category Name *</label>
@@ -30,12 +30,12 @@ AddCategory
         </div>
 
         <!-- Category Code -->
-        <div class="col-md-6">
+        {% comment %} <div class="col-md-6">
             <div class="form-floating">
                 <input type="text" name="Code" class="form-control" id="categoryCode" placeholder="Category Code">
                 <label class="form-label mb-1 text-secondary">Category Code</label>
             </div>
-        </div>
+        </div> {% endcomment %}
 
         <!-- Parent Category -->
 
@@ -71,7 +71,7 @@ AddCategory
         </div> {% endcomment %}
 
         <!-- Image Upload -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label class="form-label mb-1 text-secondary">Category Image</label>
             <input type="file" name="Image" class="form-control">
         </div>

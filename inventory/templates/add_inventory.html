@@ -9,6 +9,14 @@ Addproduct
 
     <div class="inner-content">
 
+    {% comment %} {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %} {% endcomment %}
+
     <div class="d-flex justify-content-between mb-4 align-items-center">
         <h4 class="m-0 Dashboard_H">
             <i class="bi bi-box-seam"></i> Add New Inventory Item
@@ -31,12 +39,12 @@ Addproduct
             </div>
 
             
-            <div class="col-md-6">
+            {% comment %} <div class="col-md-6">
                 <div class="form-floating">
                     <input type="text" name="Code" class="form-control" id="productCode" placeholder="Product Code">
                     <label class="form-label text-secondary">Product Code</label>
                 </div>
-            </div>
+            </div> {% endcomment %}
 
             
             <div class="col-md-6">
@@ -140,12 +148,12 @@ Addproduct
                 <input type="date" name="LastUpdate" class="form-control" id="lastUpdate" placeholder="Last Update">
             </div>
 
-            <div class="col-md-12">
+            {% comment %} <div class="col-md-12">
                 <div class="form-floating">
                     <textarea class="form-control" name="Description" id="description" placeholder="Description" style="height:100px;"></textarea>
                     <label class="form-label text-secondary">Description</label>
                 </div>
-            </div>
+            </div> {% endcomment %}
 
         </div>
 

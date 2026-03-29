@@ -79,15 +79,25 @@ def dashboard(request):
 
     # Low Stock Items (Quantity <= 15)
     low_stock_items = []
+    out_of_stock = 0
+
     for item in all_inventory:
         try:
             qty = int(item.prodStockQty) if item.prodStockQty else 0
-            if qty <= 15:
+            reorder_level = int(item.reorderLevel) if item.reorderLevel else 0
+
+            # OUT OF STOCK
+            if qty == 0:
+                out_of_stock += 1
+
+            # LOW STOCK (IMPORTANT FIX)
+            elif qty <= reorder_level:
                 low_stock_items.append({
                     'product': item,
                     'stock': qty,
-                    'reorder_qty': item.reorderQuantity # Example Reorder Quantity logic
+                    'reorder_qty': item.reorderQuantity
                 })
+
         except ValueError:
             pass
             
@@ -143,6 +153,8 @@ def dashboard(request):
         'top_customers_data': json.dumps(top_customers_data),
         'cat_stock_data': json.dumps(cat_stock_data),
         'recent_stock_data': json.dumps(recent_stock_data),
+        'out_of_stock': out_of_stock,
+        'low_stock_count': len(low_stock_items),
     }
 
     return render(request, 'dashboard.html', context)
@@ -161,11 +173,13 @@ def inventory(request):
     for item in invData:
         try:
             qty = int(item.prodStockQty) if item.prodStockQty else 0
+            reorder_level = int(item.reorderLevel) if item.reorderLevel else 0
+
             total_stock += qty
 
             if qty == 0:
                 out_stock += 1
-            elif qty <= 5:
+            elif qty <= reorder_level:
                 low_stock += 1
             else:
                 in_stock += 1
@@ -271,6 +285,7 @@ def edit_inventory(request, inventory_id):
 
         category_id = request.POST.get('Category')
         supplier_id = request.POST.get('Supplier')
+        status = request.POST.get('Status') == 'on' # Checkbox value
 
         category = CategoryMaster.objects(id=category_id).first()
         if supplier_id:
@@ -308,6 +323,8 @@ def edit_inventory(request, inventory_id):
         inventory.prodDescription = description
         inventory.reorderLevel = reorderLevel
         inventory.reorderQuantity = reorderQuantity
+        # inventory.prodStatus = "Active" if status else "Inactive"
+        inventory.prodStatus = status
 
         if image:
             inventory.prodImage.replace(image, content_type=image.content_type)
@@ -783,10 +800,18 @@ def add_sale(request):
                 
                 if product:
                     try:
+                        sell_qty = int(quantities[i])
                         current_stock = int(product.prodStockQty) if product.prodStockQty else 0
-                        new_stock = current_stock - int(quantities[i])
-                        product.prodStockQty = str(new_stock)
+
+                        #  BLOCK IF STOCK NOT ENOUGH
+                        if sell_qty > current_stock:
+                            messages.error(request, f"Only {current_stock} units of {product.prodName} are available in stock.")
+                            return redirect('add_sale')
+
+                        # SAFE UPDATE
+                        product.prodStockQty = str(current_stock - sell_qty)
                         product.save()
+
                     except ValueError:
                         pass
                 
@@ -902,8 +927,13 @@ def edit_sale(request, sale_id):
                 if product:
                     try:
                         current_stock = int(product.prodStockQty) if product.prodStockQty else 0
+                        if qty_val > current_stock:
+                            messages.error(request, f"{product.prodName} ka stock insufficient hai!")
+                            return redirect('edit_sale', sale_id=sale_id)
+
                         product.prodStockQty = str(current_stock - qty_val)
                         product.save()
+                        
                     except:
                         pass
 

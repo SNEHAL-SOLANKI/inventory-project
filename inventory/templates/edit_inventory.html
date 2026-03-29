@@ -151,13 +151,13 @@ Addproduct
             </div>
 
             <div class="col-md-6">
-                <label class="form-label mb-1 text-secondary">Status</label>
-                <div class="form-switch">
-                    <input type="checkbox" class="form-check-input" name="Status"
-                    {% if inventory.prodStatus %}checked{% endif %}>
-                    Active/Deactivate
-                </div>                            
-            </div>
+                        <label class="form-label mb-1 text-secondary">Status</label>
+                        <div class="form-switch">
+                            <input type="checkbox" class="form-check-input" name="Status"
+                            {% if inventory.prodStatus == "Active" %}checked{% endif %}>
+                            Active / Deactivate
+                        </div>
+                    </div>
 
             {% comment %} <div class="col-md-12">
                 <div class="form-floating">
